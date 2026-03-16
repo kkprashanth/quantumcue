@@ -1,0 +1,17 @@
+# Environment files
+.env
+orchestrator/.env
+qdvi/.env
+
+# Certificates
+certs/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# OS
+.DS_Store
