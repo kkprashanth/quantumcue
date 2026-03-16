@@ -1,0 +1,155 @@
+name: quantumcue
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: quantumcue-postgres
+    env_file:
+      - ./backend/.env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    networks:
+      - quantumcue-network
+    # No ports in prod (database stays internal).
+    # If you truly need host access, add: ports: ["127.0.0.1:5432:5432"]
+
+  mongodb:
+    image: mongo:7.0
+    container_name: quantumcue-mongodb
+    env_file:
+      - ./backend/.env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - quantumcue-network
+    # No ports in prod (mongo stays internal).
+    # If you truly need host access, add: ports: ["127.0.0.1:27017:27017"]
+
+  redis:
+    image: redis:7-alpine
+    container_name: quantumcue-redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - quantumcue-network
+    # No ports in prod (redis stays internal).
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: development
+    container_name: quantumcue-backend
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      POSTGRES_HOST: postgres
+      MONGODB_URL: mongodb://${MONGO_USER}:${MONGO_PASSWORD}@mongodb:27017/${MONGO_DB}?authSource=admin
+      REDIS_URL: redis://redis:6379/0
+      PYTHONPATH: /app
+      WORKER_URL: http://ml-worker:8001
+    volumes:
+      - ./backend:/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - quantumcue-network
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: development
+    container_name: quantumcue-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_BASE_URL=http://localhost/api/v1
+    depends_on:
+      - backend
+    networks:
+      - quantumcue-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: quantumcue-nginx
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    restart: unless-stopped
+    networks:
+      - quantumcue-network
+
+  ml-worker:
+    build:
+      context: ./worker-source
+      dockerfile: Dockerfile
+    container_name: quantumcue-ml-worker
+    env_file:
+      - ./backend/.env
+    environment:
+      - DROPLET1_URL=http://backend:8000
+      - API_KEY_INTERNAL=qckey_internal_v1_secure_8822
+      - SPACES_ACCESS_KEY=${SPACES_ACCESS_KEY}
+      - SPACES_SECRET_KEY=${SPACES_SECRET_KEY}
+      - SPACES_ENDPOINT=${SPACES_ENDPOINT}
+      - SPACES_REGION=${SPACES_REGION}
+      - SPACES_BUCKET=${SPACES_BUCKET}
+    restart: unless-stopped
+    networks:
+      - quantumcue-network
+
+volumes:
+  postgres_data:
+  mongodb_data:
+  redis_data:
+
+networks:
+  quantumcue-network:
+    driver: bridge

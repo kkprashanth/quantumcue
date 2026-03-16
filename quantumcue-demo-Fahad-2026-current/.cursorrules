@@ -1,0 +1,443 @@
+# QuantumCue Cursor Rules
+
+## Project Context
+
+QuantumCue is a quantum computing marketplace and orchestration platform built with:
+- Backend: Python 3.11+, FastAPI, SQLAlchemy 2.0+ (async), PostgreSQL
+- Frontend: React 18, TypeScript 5.3+, Vite, TanStack Query, Zustand, Tailwind CSS, Recharts
+
+## File Patterns
+
+### Python Files
+- Use type hints everywhere
+- Async functions for database operations
+- Google-style docstrings for public functions
+- Follow repository -> service -> endpoint pattern
+
+### TypeScript Files
+- Use functional components with hooks
+- Prefer named exports
+- Use React Query for server state, Zustand for client state
+- Follow component structure: imports, types, component, exports
+
+## Code Completions
+
+### When creating a new API endpoint:
+1. Create Pydantic schemas in `backend/app/schemas/`
+2. Create repository methods in `backend/app/repositories/`
+3. Create service methods in `backend/app/services/`
+4. Create endpoint in `backend/app/api/v1/endpoints/`
+5. Add to router in `backend/app/api/v1/router.py`
+
+### When creating a new React page:
+1. Create page component in `frontend/src/pages/`
+2. Create React Query hook in `frontend/src/hooks/`
+3. Create API endpoint in `frontend/src/api/endpoints/`
+4. Add route in `frontend/src/App.tsx`
+
+### When creating a UI component:
+1. Check if similar component exists in `frontend/src/components/ui/`
+2. Use Tailwind classes matching design system colors (see Design System Colors section)
+3. Accept className prop for customization
+4. Include loading and error states
+5. Support dark mode using `dark:` prefix classes
+
+### When creating a chart component:
+1. Use Recharts (NOT Chart.js - migrated in v2.0)
+2. Import from `frontend/src/components/charts/` (ChartContainer, CustomTooltip, GradientDefs)
+3. Use ChartContainer wrapper for consistent styling
+4. Use CustomTooltip for branded tooltips
+5. Include GradientDefs for quantum gradients
+6. Add smooth animations (800ms duration, ease-out)
+7. Use quantum color palette: purple (#a855f7), cyan (#06b6d4), green (#22c55e)
+
+## Design System Colors (v2.0 - Light Theme Default)
+
+### Primary Colors (Navy - Brand)
+```
+Navy 50-900:   Use navy-50 through navy-900
+Primary Brand: navy-900 (#102a43) - Use for logo, primary buttons, headings
+```
+
+### Quantum Accent Colors
+```
+Quantum Purple: quantum-500 (#a855f7) - Primary quantum accent
+Quantum Cyan:   cyan-500 (#06b6d4) - Jobs, providers, real-time data
+Use quantum-50 through quantum-800 for full scale
+Use cyan-50 through cyan-800 for full scale
+```
+
+### Semantic Colors
+```
+Success: success-500 (#22c55e) - Completed jobs, successful operations
+Warning: warning-500 (#f59e0b) - Queued, processing
+Error:   error-500 (#ef4444) - Failed jobs, validation errors
+Info:    info-500 (#3b82f6) - General information
+Use full scales (50, 100, 500, 600, 700) for backgrounds and text
+```
+
+### Neutral Greys (Cool-toned)
+```
+Grey 50-900:   Use grey-50 through grey-900
+Background:    grey-50 (#f8fafc) - Primary background
+Surface:       white - Card backgrounds
+Text Primary: grey-700 (#334155) - Main text
+Text Secondary: grey-500 (#64748b) - Secondary text
+Text Tertiary: grey-400 (#94a3b8) - Placeholder, labels
+```
+
+### Dark Mode Support
+- All components support dark mode via `dark:` prefix
+- Use CSS variables for theme switching
+- Theme managed by ThemeContext
+- Default: light theme, dark mode optional toggle
+
+### Tailwind Classes to Use
+```
+Backgrounds:  bg-white dark:bg-surface
+              bg-grey-50 dark:bg-background
+              bg-grey-100 dark:bg-surface-elevated
+
+Borders:      border-grey-200 dark:border-border
+              border-grey-300 dark:border-border-subtle
+
+Text:         text-grey-900 dark:text-text-primary
+              text-grey-600 dark:text-text-secondary
+              text-grey-500 dark:text-text-tertiary
+
+Buttons:      bg-gradient-primary (navy gradient)
+              bg-gradient-quantum (purple to cyan)
+              Use btn-primary, btn-quantum, btn-secondary, btn-ghost
+
+Cards:        bg-white dark:bg-surface
+              border border-grey-200 dark:border-border
+              Use Card component with variant prop (default, elevated, stat)
+
+Badges:       Use Badge component with variant prop
+              (success, warning, error, info, quantum, default)
+```
+
+## Chart Library (Recharts)
+
+### Usage Pattern
+```typescript
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
+import { ChartContainer, CustomTooltip, GradientDefs } from '@/components/charts';
+
+<ChartContainer title="Chart Title" height={400}>
+  <ResponsiveContainer width="100%" height="100%">
+    <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+      <GradientDefs />
+      <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" className="dark:stroke-border" />
+      <XAxis stroke="#64748b" className="dark:stroke-text-secondary" />
+      <YAxis stroke="#64748b" className="dark:stroke-text-secondary" />
+      <Tooltip content={<CustomTooltip />} />
+      <Bar dataKey="value" fill="url(#barGradient)" radius={[8, 8, 0, 0]} animationDuration={800} />
+    </BarChart>
+  </ResponsiveContainer>
+</ChartContainer>
+```
+
+### Available Gradients
+- `url(#barGradient)` - Vertical gradient (purple to cyan)
+- `url(#purpleGradient)` - Purple gradient
+- `url(#cyanGradient)` - Cyan gradient
+- `url(#quantumGradient)` - Horizontal gradient (purple to cyan)
+- `url(#areaPurpleGradient)` - Area chart purple fill
+- `url(#areaCyanGradient)` - Area chart cyan fill
+- `url(#radialQuantumGradient)` - Radial gradient for circular charts
+
+## Logo Usage
+
+### Logo Component
+```typescript
+import { Logo } from '@/components/brand/Logo';
+
+// Q logo only (favicon, sidebar, compact spaces)
+<Logo variant="q" size="md" />
+
+// Logo + text (headers, navigation)
+<Logo variant="full" size="md" />
+
+// Logo + text + tagline (login page, marketing)
+<Logo variant="full-with-tagline" size="lg" />
+```
+
+### Logo Files
+- `/public/logo-q.svg` - Q logo (navy #102a43)
+- `/public/logo-full.svg` - Full logo with tagline
+- Favicon files: favicon-16x16.png, favicon-32x32.png, apple-touch-icon.png, android-chrome-512x512.png
+
+## Component Patterns
+
+### Button Variants
+```typescript
+<Button variant="primary">Primary (navy gradient)</Button>
+<Button variant="quantum">Quantum (purple-cyan gradient)</Button>
+<Button variant="secondary">Secondary (flat)</Button>
+<Button variant="ghost">Ghost (transparent)</Button>
+<Button variant="danger">Danger (red)</Button>
+```
+
+### Card Variants
+```typescript
+<Card variant="default">Standard card</Card>
+<Card variant="elevated">Elevated with hover effect</Card>
+<Card variant="stat">Stat card with gradient accent bar</Card>
+```
+
+### Badge Variants
+```typescript
+<Badge variant="success">Success</Badge>
+<Badge variant="warning">Warning</Badge>
+<Badge variant="error">Error</Badge>
+<Badge variant="info">Info</Badge>
+<Badge variant="quantum">Quantum</Badge>
+<Badge variant="default">Default</Badge>
+```
+
+### Loading States
+```typescript
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { Skeleton } from '@/components/ui/Skeleton';
+
+// Quantum-branded spinner
+<LoadingSpinner size="md" label="Loading..." />
+
+// Shimmer skeleton
+<Skeleton variant="text" width="100%" height="1rem" animation="shimmer" />
+```
+
+## Theme Management
+
+### Using Theme Context
+```typescript
+import { useTheme } from '@/contexts/ThemeContext';
+
+const { theme, toggleTheme, setTheme } = useTheme();
+// theme: 'light' | 'dark'
+// toggleTheme: () => void
+// setTheme: (theme: 'light' | 'dark') => void
+```
+
+### Dark Mode Classes
+Always provide both light and dark variants:
+```typescript
+className="bg-white dark:bg-surface text-grey-900 dark:text-text-primary"
+```
+
+## Animation Guidelines
+
+### Timing
+- Instant: 100ms (hover states)
+- Fast: 150ms (button clicks)
+- Normal: 200ms (card hover, transitions)
+- Slow: 300ms (page transitions, modals)
+
+### Easing
+- Standard: `cubic-bezier(0.4, 0.0, 0.2, 1)`
+- Decelerate: `cubic-bezier(0.0, 0.0, 0.2, 1)`
+- Accelerate: `cubic-bezier(0.4, 0.0, 1, 1)`
+
+### Respect Reduced Motion
+```css
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+```
+
+## Quantum Integration Stubs
+
+When working with quantum-related code:
+- Mark integration points with "INTEGRATION POINT:" comments in docstrings
+- Use "[STUB]" prefix in log messages
+- Return realistic mock data
+- Include TODO comments for future implementation
+
+Example:
+```python
+class QCIAdapter(QuantumProviderAdapter):
+    """
+    INTEGRATION POINT: QCI Provider Adapter
+
+    TODO: Implement actual QCI API integration
+    """
+
+    async def submit_job(self, qubo: dict, params: dict) -> str:
+        logger.info("[STUB] Submitting job to QCI")
+        await asyncio.sleep(1)
+        return f"qci-job-{random.randint(10000, 99999)}"
+```
+
+## Testing
+
+- Backend: pytest with async support (`pytest-asyncio`)
+- Frontend: Vitest with Testing Library
+- Always test loading and error states
+- Use fixtures for common test data
+- Test both light and dark themes
+
+## Common Imports
+
+### Backend
+```python
+from uuid import UUID
+from datetime import datetime
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+from pydantic import BaseModel
+
+from app.core.deps import get_db, get_current_user
+from app.models.user import User
+from app.utils.logger import logger
+```
+
+### Frontend
+```typescript
+import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAuthStore } from '@/stores/authStore';
+import { useTheme } from '@/contexts/ThemeContext';
+import { Button, Card, Badge } from '@/components/ui';
+import { ChartContainer, CustomTooltip, GradientDefs } from '@/components/charts';
+import type { Job, User } from '@/types';
+```
+
+## Error Handling
+
+- Backend: Raise custom exceptions from `app/utils/exceptions.py`
+- Frontend: Let axios interceptor handle errors with toast notifications
+- Always provide meaningful error messages
+- Use appropriate HTTP status codes
+
+## File Naming
+
+- Python: snake_case (`job_repository.py`)
+- TypeScript components: PascalCase (`JobCard.tsx`)
+- TypeScript hooks: camelCase with use prefix (`useJobs.ts`)
+- TypeScript types: PascalCase in `index.ts` exports
+
+## API Response Patterns
+
+### List Endpoints
+```python
+class PaginatedResponse(BaseModel, Generic[T]):
+    items: list[T]
+    total: int
+    page: int
+    page_size: int
+    pages: int
+```
+
+### Error Responses
+```python
+{
+    "detail": "Human-readable error message",
+    "code": "ERROR_CODE"
+}
+```
+
+## Database Patterns
+
+### Model Base
+```python
+class Base(DeclarativeBase):
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(
+        default=datetime.utcnow, onupdate=datetime.utcnow
+    )
+```
+
+### Repository Base
+```python
+class BaseRepository(Generic[ModelType]):
+    def __init__(self, model: type[ModelType], session: AsyncSession):
+        self.model = model
+        self.session = session
+
+    async def get(self, id: UUID) -> ModelType | None:
+        result = await self.session.execute(
+            select(self.model).where(self.model.id == id)
+        )
+        return result.scalar_one_or_none()
+```
+
+## Frontend State Patterns
+
+### Server State (React Query)
+```typescript
+// Queries
+const { data, isLoading, error } = useQuery({
+    queryKey: ['resource', id],
+    queryFn: () => api.resource.get(id),
+});
+
+// Mutations
+const mutation = useMutation({
+    mutationFn: (data) => api.resource.create(data),
+    onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['resources'] });
+    },
+});
+```
+
+### Client State (Zustand)
+```typescript
+const useStore = create<State>()((set) => ({
+    value: initialValue,
+    setValue: (value) => set({ value }),
+}));
+```
+
+## Component Patterns
+
+### Loading States
+```typescript
+if (isLoading) {
+    return <Skeleton className="h-48 w-full" />;
+}
+```
+
+### Error States
+```typescript
+if (error) {
+    return <ErrorMessage message={error.message} />;
+}
+```
+
+### Empty States
+```typescript
+if (data.length === 0) {
+    return <EmptyState message="No items found" />;
+}
+```
+
+## Job Status Flow
+
+```
+draft -> queued -> transforming -> submitted -> running -> completed
+                                                       \-> failed
+                                          \-> cancelled
+```
+
+## Provider Types
+
+- `qci` - QCI (gate-based, photonic)
+- `dwave` - D-Wave (annealer, superconducting)
+- `ionq` - IonQ (gate-based, trapped-ion)
+
+## Key Directories
+
+- `/docs/quantumcue-prd.md` - Full PRD with specifications
+- `/docs/APPLICATION_TEMPLATE.md` - Tech stack patterns
+- `/docs/DESIGN_SYSTEM_V2.md` - Complete design system v2.0 documentation
+- `/backend/app/services/quantum/` - Quantum stubs
+- `/backend/app/services/llm/` - LLM integration
+- `/frontend/src/components/chat/` - Chat interface
+- `/frontend/src/components/charts/` - Recharts chart components
+- `/frontend/src/components/brand/` - Logo and branding components

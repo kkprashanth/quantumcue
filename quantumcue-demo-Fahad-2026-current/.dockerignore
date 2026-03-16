@@ -1,0 +1,9 @@
+**/node_modules
+**/dist
+**/.DS_Store
+backend/uploads
+backend/.venv
+frontend/.next
+frontend/build
+.git
+.env

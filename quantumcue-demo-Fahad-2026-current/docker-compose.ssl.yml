@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  # TLS termination + reverse proxy (Let’s Encrypt auto HTTPS)
+  caddy:
+    image: caddy:2.8-alpine
+    container_name: quantumcue-caddy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - backend
+      - frontend
+    restart: unless-stopped
+    networks:
+      - quantumcue-network
+
+  # Optional hardening: keep these reachable only from the droplet itself
+  # (Caddy will still reach them over the Docker network)
+  backend:
+    # Backend does not need to be published to the host when using Caddy.
+    ports: []
+
+  # Postgres does not need to be published to the host in production.
+  # This also avoids conflicts if the droplet already has something on :5432.
+  postgres:
+    ports: []
+
+  frontend:
+    # Frontend does not need to be published to the host when using Caddy.
+    ports: []
+    environment:
+      # Use same-origin API when behind Caddy (avoids hardcoding the domain)
+      - VITE_API_URL=/api/v1
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  quantumcue-network:
+    driver: bridge
+

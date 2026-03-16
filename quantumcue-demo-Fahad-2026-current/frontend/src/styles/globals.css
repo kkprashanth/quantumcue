@@ -1,0 +1,357 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CSS Custom Properties for the design system */
+:root {
+  /* Navy Color Scale */
+  --qc-navy-50: #f0f4f8;
+  --qc-navy-100: #d9e2ec;
+  --qc-navy-200: #bcccdc;
+  --qc-navy-300: #9fb3c8;
+  --qc-navy-400: #829ab1;
+  --qc-navy-500: #627d98;
+  --qc-navy-600: #486581;
+  --qc-navy-700: #334e68;
+  --qc-navy-800: #243b53;
+  --qc-navy-900: #102a43;
+
+  /* Quantum Accent Scale (Navy-based) */
+  --qc-quantum-50: #f0f4f8;
+  --qc-quantum-100: #d9e2ec;
+  --qc-quantum-200: #bcccdc;
+  --qc-quantum-300: #9fb3c8;
+  --qc-quantum-400: #829ab1;
+  --qc-quantum-500: #334e68;
+  --qc-quantum-600: #243b53;
+  --qc-quantum-700: #102a43;
+  --qc-quantum-800: #0a1f33;
+
+  /* Quantum Cyan Scale */
+  --qc-cyan-50: #ecfeff;
+  --qc-cyan-100: #cffafe;
+  --qc-cyan-200: #a5f3fc;
+  --qc-cyan-300: #67e8f9;
+  --qc-cyan-400: #22d3ee;
+  --qc-cyan-500: #06b6d4;
+  --qc-cyan-600: #0891b2;
+  --qc-cyan-700: #0e7490;
+  --qc-cyan-800: #155e75;
+
+  /* Semantic Colors */
+  --qc-success-50: #f0fdf4;
+  --qc-success-100: #dcfce7;
+  --qc-success-500: #22c55e;
+  --qc-success-600: #16a34a;
+  --qc-success-700: #15803d;
+
+  --qc-warning-50: #fffbeb;
+  --qc-warning-100: #fef3c7;
+  --qc-warning-500: #f59e0b;
+  --qc-warning-600: #d97706;
+
+  --qc-error-50: #fef2f2;
+  --qc-error-100: #fee2e2;
+  --qc-error-500: #ef4444;
+  --qc-error-600: #dc2626;
+
+  --qc-info-50: #eff6ff;
+  --qc-info-100: #dbeafe;
+  --qc-info-500: #3b82f6;
+  --qc-info-600: #2563eb;
+
+  /* Neutral Grey Scale */
+  --qc-grey-50: #f8fafc;
+  --qc-grey-100: #f1f5f9;
+  --qc-grey-200: #e2e8f0;
+  --qc-grey-300: #cbd5e1;
+  --qc-grey-400: #94a3b8;
+  --qc-grey-500: #64748b;
+  --qc-grey-600: #475569;
+  --qc-grey-700: #334155;
+  --qc-grey-800: #1e293b;
+  --qc-grey-900: #0f172a;
+
+  /* Light Theme Defaults */
+  --background: #f8fafc;
+  --surface: #ffffff;
+  --surface-elevated: #f1f5f9;
+  --border: #e2e8f0;
+  --border-subtle: #cbd5e1;
+  --text-primary: #334155;
+  --text-secondary: #64748b;
+  --text-tertiary: #94a3b8;
+
+  /* Status Colors */
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #3b82f6;
+
+  /* Quantum Theme Colors */
+  --quantum-purple: #334e68;
+  --quantum-cyan: #06b6d4;
+
+  /* Font Families */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  --font-display: 'Inter Display', 'Inter', sans-serif;
+}
+
+/* Dark Mode Variables */
+.dark {
+  --background: #0a0a0b;
+  --surface: #141415;
+  --surface-elevated: #1c1c1e;
+  --border: #2e2e32;
+  --border-subtle: #232326;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-tertiary: #71717a;
+}
+
+/* Base styles */
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-background text-text-primary;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-grey-100 dark:bg-surface;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-grey-300 dark:bg-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-grey-400 dark:bg-text-tertiary;
+  }
+
+  /* Focus styles */
+  *:focus-visible {
+    @apply outline-none ring-2 ring-navy-900 dark:ring-navy-700 ring-offset-2 ring-offset-background;
+  }
+
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Component styles */
+@layer components {
+
+  /* Button variants */
+  .btn {
+    @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-normal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-navy-900 dark:focus-visible:ring-navy-700 focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply btn bg-gradient-primary text-white hover:bg-gradient-primary-hover hover:shadow-md hover:-translate-y-0.5 active:translate-y-0;
+  }
+
+  .btn-quantum {
+    @apply btn bg-gradient-quantum text-white hover:bg-gradient-quantum-hover hover:shadow-quantum hover:-translate-y-0.5 active:translate-y-0;
+  }
+
+  .btn-secondary {
+    @apply btn bg-surface dark:bg-surface border border-border text-text-primary hover:bg-grey-100 dark:hover:bg-surface-elevated;
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent text-text-secondary hover:text-text-primary hover:bg-grey-100 dark:hover:bg-surface;
+  }
+
+  .btn-destructive {
+    @apply btn bg-error text-white hover:bg-error/90;
+  }
+
+  /* Card */
+  .card {
+    @apply bg-surface dark:bg-surface border border-border dark:border-border rounded-lg transition-all;
+  }
+
+  .card-elevated {
+    @apply card hover:shadow-lg hover:-translate-y-1 dark:hover:bg-surface-elevated;
+  }
+
+  .card-stat {
+    @apply card relative overflow-hidden;
+  }
+
+  .card-stat::before {
+    content: '';
+    @apply absolute top-0 left-0 right-0 h-1 bg-gradient-quantum opacity-0 transition-opacity duration-normal;
+  }
+
+  .card-stat:hover::before {
+    @apply opacity-100;
+  }
+
+  .card-stat:hover {
+    @apply border-grey-300 dark:border-border-subtle shadow-md;
+  }
+
+  /* Input */
+  .input {
+    @apply w-full bg-surface dark:bg-surface border border-border dark:border-border rounded-lg px-3 py-2 text-text-primary placeholder:text-text-tertiary focus:border-navy-900 dark:focus:border-navy-700 focus:ring-2 focus:ring-navy-900/10 dark:focus:ring-navy-700/20 transition-colors;
+  }
+
+  /* Badge / Status */
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+
+  .badge-success {
+    @apply badge bg-success-100 dark:bg-success-500/20 text-success-700 dark:text-success-500;
+  }
+
+  .badge-warning {
+    @apply badge bg-warning-100 dark:bg-warning-500/20 text-warning-700 dark:text-warning-500;
+  }
+
+  .badge-error {
+    @apply badge bg-error-100 dark:bg-error-500/20 text-error-700 dark:text-error-500;
+  }
+
+  .badge-info {
+    @apply badge bg-info-100 dark:bg-info-500/20 text-info-700 dark:text-info-500;
+  }
+
+  .badge-quantum {
+    @apply badge bg-gradient-to-r from-navy-100 to-cyan-100 dark:from-navy-500/20 dark:to-cyan-500/20 text-navy-700 dark:text-navy-400;
+  }
+
+  /* Legacy badge classes for backward compatibility */
+  .badge-draft {
+    @apply badge bg-grey-100 dark:bg-text-secondary/10 text-grey-600 dark:text-text-secondary;
+  }
+
+  .badge-queued {
+    @apply badge-info;
+  }
+
+  .badge-running {
+    @apply badge-warning animate-pulse;
+  }
+
+  .badge-completed {
+    @apply badge-success;
+  }
+
+  .badge-failed {
+    @apply badge-error;
+  }
+}
+
+/* Utility styles */
+@layer utilities {
+
+  /* Gradient text */
+  .text-gradient {
+    @apply bg-gradient-quantum bg-clip-text text-transparent;
+  }
+
+  /* Monospace text */
+  .font-code {
+    font-family: var(--font-mono);
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Quantum Grid Pattern */
+  .quantum-grid-bg {
+    background-image:
+      linear-gradient(rgba(51, 78, 104, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(51, 78, 104, 0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  /* Quantum Wave Pattern */
+  .quantum-wave-bg {
+    @apply relative;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  }
+
+  .quantum-wave-bg::before {
+    content: '';
+    @apply absolute top-0 left-0 right-0 h-72 pointer-events-none;
+    background: radial-gradient(ellipse at top, rgba(51, 78, 104, 0.03), transparent);
+  }
+
+  /* Quantum Glow Effect */
+  .quantum-glow {
+    box-shadow: 0 0 20px rgba(51, 78, 104, 0.15);
+  }
+
+  /* Skeleton Shimmer */
+  .skeleton {
+    background: linear-gradient(90deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%);
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite linear;
+  }
+
+  .dark .skeleton {
+    background: linear-gradient(90deg, #141415 0%, #1c1c1e 50%, #141415 100%);
+    background-size: 1000px 100%;
+  }
+
+  /* Reduced Motion Support */
+  @media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+
+.chart-exporting {
+  width: 100% !important;
+}
+
+.chart-exporting .flex {
+  flex-wrap: nowrap !important;
+}
+
+.chart-exporting .flex-row {
+  flex-direction: row !important;
+}
+
+.chart-exporting .items-center {
+  align-items: center !important;
+}

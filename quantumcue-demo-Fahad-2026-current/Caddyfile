@@ -1,0 +1,19 @@
+{
+	# Optional: set a contact email for ACME account registration
+	# email admin@quantumharlem.org
+}
+
+quantumharlem.org, www.quantumharlem.org {
+	encode zstd gzip
+
+	# API -> backend (keep /api prefix intact)
+	handle /api/* {
+		reverse_proxy backend:8000
+	}
+
+	# Everything else -> frontend (Vite dev server in docker-compose.yml)
+	handle {
+		reverse_proxy frontend:3000
+	}
+}
+

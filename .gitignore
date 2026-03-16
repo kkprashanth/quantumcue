@@ -1,0 +1,61 @@
+# Environment files
+**/.env
+**/.env.*
+**/certs/
+**/certbot/
+
+# Python artifacts
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.pyd
+**/.pytest_cache/
+**/.venv/
+**/venv/
+**/env/
+
+# Node/Frontend artifacts
+**/node_modules/
+**/dist/
+**/build/
+**/.next/
+**/*.tsbuildinfo
+**/dist-ssr/
+.eslintcache
+
+# Databases & Persistence
+**/postgres_data/
+**/mongodb_data/
+**/redis_data/
+backend/app/static/uploads/*
+!backend/app/static/uploads/.gitkeep
+
+# IDEs & OS
+.DS_Store
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.user
+*.userosscache
+*.sln.docstates
+
+# Logs
+**/*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files from troubleshooting
+backend/latest_error_output.txt
+backend/latest_run.txt
+backend/log_output.txt
+backend/upload_error.txt
+backend/dataset_details.json
+quantumcue-droplet-2-api-server-current/latest_error_output.txt
+quantumcue-droplet-2-api-server-current/latest_run.txt
+quantumcue-droplet-2-api-server-current/log_output.txt
+quantumcue-droplet-2-api-server-current/upload_error.txt
